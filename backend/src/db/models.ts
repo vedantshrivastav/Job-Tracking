@@ -16,7 +16,7 @@ const ResumeVersionSchema = new mongoose.Schema({
 export const ResumeVersionModel = mongoose.model("ResumeVersion",ResumeVersionSchema)
 
 const JobApplicationSchema = new mongoose.Schema({
-    userId : {type : mongoose.Schema.Types.ObjectId,ref : "User"},
+    UserId : {type : mongoose.Schema.Types.ObjectId,ref : "User"},
     resumeId : {type : mongoose.Schema.Types.ObjectId,ref : "ResumeVersion"},
     JobTitle : {type : String},
     company : {type : String},
@@ -36,7 +36,7 @@ const JobApplicationSchema = new mongoose.Schema({
       appliedDate : Date,
       lastUpdate : Date,
       followUpDate : Date,
-      // we can also add AI analysis here
+      // we can also add AI analysis here later
       notes : [{type : mongoose.Schema.Types.ObjectId,ref : 'Notes'}],
       timeline : [{type : mongoose.Schema.Types.ObjectId,ref : 'Timeline'}]
 })

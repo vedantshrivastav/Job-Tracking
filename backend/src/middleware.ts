@@ -7,7 +7,7 @@ export function AuthMiddleware(req : Request,res:Response,next:NextFunction){
     const header = req.headers['authorization'] as string
     try{
         const response = jwt.verify(header,JWT_SECRET) as JwtPayload
-        req.userId = response.id
+        req.UserId = response.id
         next()
     }
     catch(e){

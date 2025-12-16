@@ -53,11 +53,11 @@ export const NotesModel = mongoose.model('Notes',NotesSchema)
 
 const TimelineEventSchema = new mongoose.Schema({
     JobId : {type : mongoose.Schema.Types.ObjectId,ref : 'JobApplication'},
-    type : {type : String}, // Applied,Interview,followUp
+    type : {type : String,required : true}, // Applied,Interview,followUp
     description : {type : String},
     date : Date
 })
-export const TimelineSchema = mongoose.model('Timeline',TimelineEventSchema)
+export const TimelineModel = mongoose.model('Timeline',TimelineEventSchema)
 
 
 

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FollowUpReminderModel = exports.AnalyticsSnapshotModel = exports.TimelineSchema = exports.NotesModel = exports.JobApplicationModel = exports.ResumeVersionModel = exports.UserModel = void 0;
+exports.FollowUpReminderModel = exports.AnalyticsSnapshotModel = exports.TimelineModel = exports.NotesModel = exports.JobApplicationModel = exports.ResumeVersionModel = exports.UserModel = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const UserSchema = new mongoose_1.default.Schema({
     name: { type: String, required: true },
@@ -19,7 +19,7 @@ const ResumeVersionSchema = new mongoose_1.default.Schema({
 });
 exports.ResumeVersionModel = mongoose_1.default.model("ResumeVersion", ResumeVersionSchema);
 const JobApplicationSchema = new mongoose_1.default.Schema({
-    userId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "User" },
+    UserId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "User" },
     resumeId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "ResumeVersion" },
     JobTitle: { type: String },
     company: { type: String },
@@ -39,7 +39,7 @@ const JobApplicationSchema = new mongoose_1.default.Schema({
     appliedDate: Date,
     lastUpdate: Date,
     followUpDate: Date,
-    // we can also add AI analysis here
+    // we can also add AI analysis here later
     notes: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: 'Notes' }],
     timeline: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: 'Timeline' }]
 });
@@ -52,11 +52,11 @@ const NotesSchema = new mongoose_1.default.Schema({
 exports.NotesModel = mongoose_1.default.model('Notes', NotesSchema);
 const TimelineEventSchema = new mongoose_1.default.Schema({
     JobId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: 'JobApplication' },
-    type: { type: String }, // Applied,Interview,followUp
+    type: { type: String, required: true }, // Applied,Interview,followUp
     description: { type: String },
     date: Date
 });
-exports.TimelineSchema = mongoose_1.default.model('Timeline', TimelineEventSchema);
+exports.TimelineModel = mongoose_1.default.model('Timeline', TimelineEventSchema);
 const AnalyticsSnapshotSchema = new mongoose_1.default.Schema({
     userId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "User" },
     totalApplications: Number,

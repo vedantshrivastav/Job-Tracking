@@ -14,6 +14,7 @@ const JWT_SECRET = 'shdjshdwuieiwoeiow'
 
 app.post('/SignUp', async(req,res) => {
     const {success,data} = SignUpSchema.safeParse(req.body)
+    console.log("this is data",data)
     if(!success){
         res.status(403).json({message : 'Incorrect Request'})
         return

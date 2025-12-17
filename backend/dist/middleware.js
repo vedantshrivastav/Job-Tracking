@@ -10,7 +10,7 @@ function AuthMiddleware(req, res, next) {
     const header = req.headers['authorization'];
     try {
         const response = jsonwebtoken_1.default.verify(header, JWT_SECRET);
-        req.userId = response.id;
+        req.UserId = response.id;
         next();
     }
     catch (e) {

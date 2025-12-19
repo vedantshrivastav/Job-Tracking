@@ -1,6 +1,7 @@
 import React from "react";
-
+import { useRouter } from "next/navigation";
 export const Header = () => {
+  const router = useRouter();
   return (
     <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-zinc-100">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -35,11 +36,11 @@ export const Header = () => {
           </nav>
         </div>
         <div className="flex items-center gap-4">
-          <button className="text-sm font-medium text-zinc-600 hover:text-zinc-900 px-3 py-1.5 transition-colors">
-            Log in
-          </button>
-          <button className="text-sm font-medium bg-zinc-900 text-white hover:bg-zinc-800 px-4 py-1.5 rounded-md transition-all shadow-sm">
-            Join Waitlist
+          <button
+            onClick={() => router.push("/signup")}
+            className="text-sm font-medium bg-zinc-900 text-white hover:bg-zinc-800 px-4 py-1.5 rounded-md transition-all shadow-sm"
+          >
+            Sign Up
           </button>
         </div>
       </div>

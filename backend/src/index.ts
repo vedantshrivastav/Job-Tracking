@@ -4,9 +4,11 @@ import { AuthMiddleware } from './middleware'
 import { FollowUpReminderModel, JobApplicationModel, NotesModel, TimelineModel, UserModel } from './db/models'
 import jwt from 'jsonwebtoken'
 import { connectDB } from './db/config'
+import cors from 'cors'
 const app = express()
-const PORT = 3000
+const PORT = 3001
 app.use(express.json())
+app.use(cors())
 
 const JWT_SECRET = 'shdjshdwuieiwoeiow'
 

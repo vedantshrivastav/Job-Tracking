@@ -18,9 +18,11 @@ const middleware_1 = require("./middleware");
 const models_1 = require("./db/models");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = require("./db/config");
+const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
-const PORT = 3000;
+const PORT = 3001;
 app.use(express_1.default.json());
+app.use((0, cors_1.default)());
 const JWT_SECRET = 'shdjshdwuieiwoeiow';
 //AUTH ROUTES
 app.post('/SignUp', (req, res) => __awaiter(void 0, void 0, void 0, function* () {

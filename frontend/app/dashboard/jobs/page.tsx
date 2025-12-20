@@ -186,7 +186,7 @@ const RenderJobs = () => {
               ))}
             </tbody>
           </table>
-          <div className="p-4 border-t border-zinc-100 bg-zinc-50/30 flex items-center justify-center">
+          <div className="p-4 border-t border-zinc-200 bg-zinc-100/60 flex items-center justify-center cursor-pointer">
             <button className="text-xs font-semibold text-zinc-500 hover:text-zinc-900 transition-colors">
               Load more
             </button>

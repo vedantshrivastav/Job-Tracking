@@ -7,13 +7,20 @@ exports.AuthMiddleware = AuthMiddleware;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const JWT_SECRET = "SJDSJDWIWEU2923923AQ";
 function AuthMiddleware(req, res, next) {
-    const header = req.headers['authorization'];
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(403).json({ message: "No token provided" });
+    }
+    const token = authHeader.split(" ")[1]; // ✅ Bearer <token>
+    if (!token) {
+        return res.status(403).json({ message: "Invalid token format" });
+    }
     try {
-        const response = jsonwebtoken_1.default.verify(header, JWT_SECRET);
-        req.UserId = response.id;
+        const decoded = jsonwebtoken_1.default.verify(token, JWT_SECRET);
+        req.UserId = decoded.id;
         next();
     }
-    catch (e) {
-        res.status(403).json({ message: "You are not logged In" });
+    catch (err) {
+        return res.status(403).json({ message: "Invalid or expired token" });
     }
 }

@@ -52,7 +52,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <nav className="space-y-1">
             <NavItem icon={<DashboardIcon />} label="Dashboard" />
             <NavItem icon={<JobsIcon />} label="jobs" />
-            <NavItem icon={<FollowUpIcon />} label="Follow-ups" />
+            <NavItem icon={<FollowUpIcon />} label="follow-ups" />
             <NavItem icon={<AnalyticsIcon />} label="Analytics" />
             <NavItem icon={<SettingsIcon />} label="Settings" />
           </nav>

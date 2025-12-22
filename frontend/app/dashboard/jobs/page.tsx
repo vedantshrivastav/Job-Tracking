@@ -9,7 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 
 type JobFromBackend = {
   _id: string;
-  role?: string;
+  JobTitle?: string;
   company: string;
   status: string;
   appliedDate: string;
@@ -42,7 +42,7 @@ const fetchJobs = async (): Promise<JobFromBackend[]> => {
 
 const normalizeJobs = (jobs: JobFromBackend[]): JobUI[] => {
   return jobs.map((job) => ({
-    role: job.role ?? "—",
+    role: job.JobTitle ?? "—",
     company: job.company,
     status: job.status,
     appliedDate: new Date(job.appliedDate).toLocaleDateString("en-US", {
@@ -81,6 +81,8 @@ const RenderJobs = () => {
       return matchesSearch && matchesStatus;
     });
   }, [jobs, searchQuery, statusFilter]);
+
+  console.log("filteredJobs", filteredJobs);
 
   if (isLoading) return <p>Loading jobs...</p>;
   if (isError) return <p>Failed to load jobs</p>;

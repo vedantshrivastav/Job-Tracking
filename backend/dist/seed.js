@@ -16,8 +16,8 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const models_1 = require("./db/models");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-const MONGO_URL = "mongodb+srv://shrivastavvedant15_db_user:vedant123@job-tracking.fug2alw.mongodb.net/?appName=Job-Tracking";
-const USER_ID = new mongoose_1.default.Types.ObjectId("6942be4b3b4f55377a861832");
+const MONGO_URL = "";
+const USER_ID = new mongoose_1.default.Types.ObjectId("");
 function seed() {
     return __awaiter(this, void 0, void 0, function* () {
         yield mongoose_1.default.connect(MONGO_URL);

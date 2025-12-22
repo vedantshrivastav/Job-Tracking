@@ -28,11 +28,13 @@ type JobUI = {
 
 const fetchJobs = async (): Promise<JobFromBackend[]> => {
   const token = localStorage.getItem("token");
+  console.log("token on frontend", token);
   const res = await axios.get("http://localhost:3001/jobs", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
+  console.log("all jobs", res.data);
   return res.data.all_jobs; // ✅ matches backend
 };
 
@@ -59,8 +61,10 @@ const RenderJobs = () => {
     queryKey: ["jobs"],
     queryFn: fetchJobs,
   });
-
+  console.log("frontend dara", data);
   const jobs = useMemo(() => (data ? normalizeJobs(data) : []), [data]);
+
+  console.log("frontend jobs", jobs);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");

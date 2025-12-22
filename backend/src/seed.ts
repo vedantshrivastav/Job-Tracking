@@ -1,111 +1,89 @@
+import mongoose from "mongoose";
+import { JobApplicationModel } from "./db/models";
+import dotenv from "dotenv";
 
-import mongoose from "mongoose"
-import { JobApplicationModel } from "./db/models"
-import dotenv from 'dotenv'
-dotenv.config()
-const MONGO_URL = ""
-const USER_ID = ""
-async function seed(){
-    await mongoose.connect(MONGO_URL)
-    const jobs = [
+dotenv.config();
+
+const MONGO_URL =""
+const USER_ID = new mongoose.Types.ObjectId("");
+
+async function seed() {
+  await mongoose.connect(MONGO_URL);
+
+  const jobs = [
     {
-      userId: USER_ID,
-      jobTitle: "Backend Developer",
+      UserId: USER_ID,
+      JobTitle: "Backend Developer",
       company: "Google",
       location: "Bangalore",
       source: "LinkedIn",
-      jobUrl: "https://google.com/job1",
+      JobUrl: "https://google.com/job1",
       status: "Applied",
-      appliedDate: new Date()
+      appliedDate: new Date(),
+      lastUpdate: new Date(),
+      notes: [],
+      timeline: [],
     },
     {
-      userId: USER_ID,
-      jobTitle: "Full Stack Developer",
+      UserId: USER_ID,
+      JobTitle: "Full Stack Developer",
       company: "Amazon",
       location: "Hyderabad",
       source: "Careers Page",
-      jobUrl: "https://amazon.com/job2",
+      JobUrl: "https://amazon.com/job2",
       status: "HR Call",
-      appliedDate: new Date()
+      appliedDate: new Date(),
+      lastUpdate: new Date(),
+      notes: [],
+      timeline: [],
     },
     {
-      userId: USER_ID,
-      jobTitle: "Node.js Developer",
+      UserId: USER_ID,
+      JobTitle: "Node.js Developer",
       company: "Flipkart",
       location: "Bangalore",
       source: "Referral",
-      jobUrl: "https://flipkart.com/job3",
-      status: "Interview 1"
+      JobUrl: "https://flipkart.com/job3",
+      status: "Interview 1",
+      appliedDate: new Date(),
+      lastUpdate: new Date(),
+      notes: [],
+      timeline: [],
     },
     {
-      userId: USER_ID,
-      jobTitle: "Software Engineer",
+      UserId: USER_ID,
+      JobTitle: "Software Engineer",
       company: "Microsoft",
       location: "Remote",
       source: "LinkedIn",
-      jobUrl: "https://microsoft.com/job4",
-      status: "Interview 2"
+      JobUrl: "https://microsoft.com/job4",
+      status: "Interview 2",
+      appliedDate: new Date(),
+      lastUpdate: new Date(),
+      notes: [],
+      timeline: [],
     },
     {
-      userId: USER_ID,
-      jobTitle: "Backend Engineer",
+      UserId: USER_ID,
+      JobTitle: "Backend Engineer",
       company: "Razorpay",
       location: "Remote",
       source: "Website",
-      jobUrl: "https://razorpay.com/job5",
-      status: "Test"
+      JobUrl: "https://razorpay.com/job5",
+      status: "Test",
+      appliedDate: new Date(),
+      lastUpdate: new Date(),
+      notes: [],
+      timeline: [],
     },
-    {
-      userId: USER_ID,
-      jobTitle: "API Developer",
-      company: "Swiggy",
-      location: "Bangalore",
-      source: "LinkedIn",
-      jobUrl: "https://swiggy.com/job6",
-      status: "Rejected"
-    },
-    {
-      userId: USER_ID,
-      jobTitle: "Junior Backend Developer",
-      company: "Zomato",
-      location: "Gurgaon",
-      source: "Website",
-      jobUrl: "https://zomato.com/job7",
-      status: "Ghosted"
-    },
-    {
-      userId: USER_ID,
-      jobTitle: "Software Engineer",
-      company: "Paytm",
-      location: "Noida",
-      source: "Referral",
-      jobUrl: "https://paytm.com/job8",
-      status: "Applied"
-    },
-    {
-      userId: USER_ID,
-      jobTitle: "Node Developer",
-      company: "CRED",
-      location: "Remote",
-      source: "LinkedIn",
-      jobUrl: "https://cred.club/job9",
-      status: "Offer"
-    },
-    {
-      userId: USER_ID,
-      jobTitle: "Backend Intern",
-      company: "StartupX",
-      location: "Remote",
-      source: "AngelList",
-      jobUrl: "https://angel.co/job10",
-      status: "Applied"
-    }
-  ]
-  await JobApplicationModel.insertMany(jobs)
-  console.log("✅ Seeded 10 job applications")
-  process.exit(0)
+  ];
+
+  await JobApplicationModel.insertMany(jobs);
+  console.log("✅ Seeded job applications correctly");
+  process.exit(0);
 }
+
 seed().catch((err) => {
-    console.error(err)
-    process.exit(1)
-})
+  console.error(err);
+  process.exit(1);
+});

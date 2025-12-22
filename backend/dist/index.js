@@ -22,7 +22,12 @@ const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
 const PORT = 3001;
 app.use(express_1.default.json());
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({
+    origin: "http://localhost:3000",
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+}));
 const JWT_SECRET = 'shdjshdwuieiwoeiow';
 //AUTH ROUTES
 app.post('/SignUp', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -119,10 +124,12 @@ app.post('/job', middleware_1.AuthMiddleware, (req, res) => __awaiter(void 0, vo
 }));
 app.get('/jobs', middleware_1.AuthMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const UserId = req.UserId;
+    console.log("UserId", UserId);
     try {
         const all_jobs = yield models_1.JobApplicationModel.find({
             UserId
         });
+        console.log(all_jobs);
         res.status(200).json({ all_jobs });
     }
     catch (e) {

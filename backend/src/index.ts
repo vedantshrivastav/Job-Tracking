@@ -8,7 +8,16 @@ import cors from 'cors'
 const app = express()
 const PORT = 3001
 app.use(express.json())
-app.use(cors())
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  })
+);
+
 
 const JWT_SECRET = 'shdjshdwuieiwoeiow'
 
@@ -112,10 +121,12 @@ app.post('/job',AuthMiddleware,async(req,res) => {
 
 app.get('/jobs',AuthMiddleware,async(req,res) => {
     const UserId = req.UserId
+    console.log("UserId",UserId)
     try{
         const all_jobs = await JobApplicationModel.find({
             UserId
         })
+        console.log(all_jobs)
         res.status(200).json({all_jobs})
     }
     catch(e){

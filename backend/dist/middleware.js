@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthMiddleware = AuthMiddleware;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const JWT_SECRET = "SJDSJDWIWEU2923923AQ";
+const JWT_SECRET = 'shdjshdwuieiwoeiow';
 function AuthMiddleware(req, res, next) {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
@@ -15,6 +15,7 @@ function AuthMiddleware(req, res, next) {
     if (!token) {
         return res.status(403).json({ message: "Invalid token format" });
     }
+    console.log("token recieved on backend", token);
     try {
         const decoded = jsonwebtoken_1.default.verify(token, JWT_SECRET);
         req.UserId = decoded.id;

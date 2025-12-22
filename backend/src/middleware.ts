@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
-const JWT_SECRET = "SJDSJDWIWEU2923923AQ";
+const JWT_SECRET = 'shdjshdwuieiwoeiow'
+
 
 export function AuthMiddleware(
   req: Request,
@@ -19,7 +20,7 @@ export function AuthMiddleware(
   if (!token) {
     return res.status(403).json({ message: "Invalid token format" });
   }
-
+   console.log("token recieved on backend",token)
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
     req.UserId = decoded.id;

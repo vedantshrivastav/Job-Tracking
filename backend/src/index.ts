@@ -222,22 +222,21 @@ app.post('/jobs/:id/follow-up',AuthMiddleware,async(req,res) => {
     res.status(500).json({ message: "Something went wrong" })
     }
 })
-app.get('/follow-ups',AuthMiddleware,async(req,res) => {
-    const userId = req.UserId
-    const now = new Date()
-    try{
-        const followUps = await FollowUpReminderModel.find({
-            userId:userId,
-            sent : false,
-            scheduledFor : {$lte : now}
-        }).populate('jobId')
-        res.status(200).json(followUps)
-    }
-    catch(e){
-        console.error(e)
-    res.status(500).json({ message: "Something went wrong" })
-    }
-})
+app.get("/follow-ups", AuthMiddleware, async (req, res) => {
+  try {
+    const followUps = await FollowUpReminderModel.find({
+      userId: req.UserId,
+    })
+      .populate("jobId")
+      .sort({ scheduledFor: 1 });
+
+    res.status(200).json(followUps);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
 //Notes Routes
 app.post('/job/:id/notes',AuthMiddleware,async(req,res) => {
     const JobId = req.params.id

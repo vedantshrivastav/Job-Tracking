@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 
 interface FollowUpItem {
   role: string;
@@ -9,6 +9,19 @@ interface FollowUpItem {
   lastContacted: string;
   notes: string;
   status: "Upcoming" | "Overdue" | "Completed";
+}
+interface FollowUpApiResponse {
+  _id: string;
+  scheduledFor: string;
+  sent: boolean;
+  sentAt?: string | null;
+  jobId: {
+    _id: string;
+    JobTitle: string;
+    company: string;
+    status: string;
+    lastUpdate?: string;
+  };
 }
 
 const INITIAL_FOLLOW_UPS: FollowUpItem[] = [
@@ -51,19 +64,66 @@ const INITIAL_FOLLOW_UPS: FollowUpItem[] = [
 ];
 
 const FollowUpsView: React.FC = () => {
+  const [followUps, setFollowUps] = useState<FollowUpItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
 
+  useEffect(() => {
+    async function fetchFollowUps() {
+      try {
+        const res = await fetch("http://localhost:3001/follow-ups", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        const data = await res.json();
+
+        const transformed: FollowUpItem[] = data.map(
+          (item: FollowUpApiResponse) => ({
+            role: item.jobId.JobTitle,
+            company: item.jobId.company,
+            currentStatus: item.jobId.status,
+            followUpDate: new Date(item.scheduledFor).toLocaleDateString(
+              "en-US",
+              { month: "short", day: "2-digit", year: "numeric" }
+            ),
+            lastContacted: item.jobId.lastUpdate
+              ? timeAgo(new Date(item.jobId.lastUpdate))
+              : "—",
+            notes: "",
+            status: getFollowUpStatus(item.scheduledFor, item.sent),
+          })
+        );
+
+        setFollowUps(transformed);
+      } catch (err) {
+        console.error("Failed to fetch follow-ups", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchFollowUps();
+  }, []);
+
   const filteredFollowUps = useMemo(() => {
-    return INITIAL_FOLLOW_UPS.filter((item) => {
+    return followUps.filter((item) => {
       const matchesSearch =
         item.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.company.toLowerCase().includes(searchQuery.toLowerCase());
+
       const matchesStatus =
         statusFilter === "All" || item.status === statusFilter;
+
       return matchesSearch && matchesStatus;
     });
-  }, [searchQuery, statusFilter]);
+  }, [followUps, searchQuery, statusFilter]);
+
+  if (loading) {
+    return <div className="text-sm text-zinc-500">Loading follow-ups…</div>;
+  }
 
   return (
     <div className="space-y-8 pb-12">
@@ -251,5 +311,18 @@ const MoreIcon = () => (
     ></path>
   </svg>
 );
+function timeAgo(date: Date) {
+  const diff = Math.floor((Date.now() - date.getTime()) / 1000 / 60 / 60 / 24);
+  if (diff === 0) return "Today";
+  if (diff === 1) return "1d ago";
+  return `${diff}d ago`;
+}
+function getFollowUpStatus(
+  scheduledFor: string,
+  sent: boolean
+): "Upcoming" | "Overdue" | "Completed" {
+  if (sent) return "Completed";
+  return new Date(scheduledFor) < new Date() ? "Overdue" : "Upcoming";
+}
 
 export default FollowUpsView;

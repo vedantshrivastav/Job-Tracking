@@ -221,15 +221,13 @@ app.post('/jobs/:id/follow-up', middleware_1.AuthMiddleware, (req, res) => __awa
         res.status(500).json({ message: "Something went wrong" });
     }
 }));
-app.get('/follow-ups', middleware_1.AuthMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const userId = req.UserId;
-    const now = new Date();
+app.get("/follow-ups", middleware_1.AuthMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const followUps = yield models_1.FollowUpReminderModel.find({
-            userId: userId,
-            sent: false,
-            scheduledFor: { $lte: now }
-        }).populate('jobId');
+            userId: req.UserId,
+        })
+            .populate("jobId")
+            .sort({ scheduledFor: 1 });
         res.status(200).json(followUps);
     }
     catch (e) {

@@ -331,25 +331,59 @@ app.get('/jobs/:id/timeline', middleware_1.AuthMiddleware, (req, res) => __await
     }
 }));
 // Dashboard routes
-app.get('/dashboard', middleware_1.AuthMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get("/dashboard", middleware_1.AuthMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const UserId = req.UserId;
     try {
-        const total = yield models_1.JobApplicationModel.countDocuments({ UserId: UserId });
-        const byStatus = yield models_1.JobApplicationModel.aggregate([
-            { $match: { UserId } },
-            { $group: { _id: '$status', count: { $sum: 1 } } }
-        ]);
-        const jobs = yield models_1.JobApplicationModel.find({ UserId: UserId }, { _id: 1 });
-        const jobs_id = jobs.map(j => j._id);
-        const UpcomingFollowUps = yield models_1.FollowUpReminderModel.countDocuments({
-            jobId: { $in: jobs_id },
-            sent: false,
-            scheduledFor: { $lte: new Date() }
+        /* ------------------ Stats ------------------ */
+        const totalApplications = yield models_1.JobApplicationModel.countDocuments({
+            UserId,
         });
+        const activeInterviews = yield models_1.JobApplicationModel.countDocuments({
+            UserId,
+            status: { $in: ["HR Call", "Interview 1", "Interview 2", "Test"] },
+        });
+        const offers = yield models_1.JobApplicationModel.countDocuments({
+            UserId,
+            status: "Offer",
+        });
+        /* ------------------ Status Breakdown ------------------ */
+        const statusAggregation = yield models_1.JobApplicationModel.aggregate([
+            { $match: { UserId } },
+            { $group: { _id: "$status", total: { $sum: 1 } } },
+            { $project: { _id: 0, name: "$_id", total: 1 } },
+        ]);
+        /* ------------------ Recent Jobs ------------------ */
+        const recentJobs = yield models_1.JobApplicationModel.find({ UserId }, {
+            JobTitle: 1,
+            company: 1,
+            status: 1,
+            appliedDate: 1,
+        })
+            .sort({ appliedDate: -1 })
+            .limit(5);
+        /* ------------------ Follow-ups ------------------ */
+        const followUps = yield models_1.FollowUpReminderModel.find({
+            userId: UserId,
+            sent: false,
+            scheduledFor: { $lte: new Date() },
+        })
+            .populate("jobId", "company JobTitle status lastUpdate")
+            .lean();
+        /* ------------------ Response ------------------ */
         res.status(200).json({
-            totalApplications: total,
-            StatusBreakdown: byStatus,
-            followUpDues: UpcomingFollowUps
+            stats: {
+                totalApplications,
+                activeInterviews,
+                offers,
+                followUps: followUps.length,
+            },
+            statusBreakdown: statusAggregation,
+            recentJobs,
+            followUps: followUps.map((f) => ({
+                target: f.jobId.company,
+                action: `Follow up for ${f.jobId.JobTitle}`,
+                due: f.scheduledFor,
+            }))
         });
     }
     catch (e) {

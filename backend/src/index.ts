@@ -18,6 +18,19 @@ app.use(
   })
 );
 
+interface JobApplicationPopulated {
+  company: string;
+  JobTitle: string;
+  status: string;
+  lastUpdate?: Date;
+}
+interface FollowUpPopulated {
+  jobId: JobApplicationPopulated;
+  scheduledFor: Date;
+  sent: boolean;
+}
+
+
 
 const JWT_SECRET = 'shdjshdwuieiwoeiow'
 
@@ -332,32 +345,81 @@ app.get('/jobs/:id/timeline',AuthMiddleware,async(req,res) => {
     }
 })
 // Dashboard routes
-app.get('/dashboard',AuthMiddleware,async(req,res) => {
-    const UserId = req.UserId
-    try{
-        const total = await JobApplicationModel.countDocuments({UserId : UserId})
-        const byStatus = await JobApplicationModel.aggregate([
-            {$match : {UserId}},
-            {$group : {_id : '$status',count : {$sum : 1}}}
-        ])
-        const jobs = await JobApplicationModel.find({UserId :UserId },{_id : 1})
-        const jobs_id = jobs.map(j => j._id)
-        const UpcomingFollowUps = await FollowUpReminderModel.countDocuments({
-            jobId : {$in : jobs_id},
-            sent : false,
-            scheduledFor : {$lte : new Date()}
-        })
-        res.status(200).json({
-            totalApplications : total,
-            StatusBreakdown : byStatus,
-            followUpDues : UpcomingFollowUps
-        })
-    }
-    catch(e){
-       console.error(e)
-    res.status(500).json({ message: "Something went wrong" })     
-    }
+app.get("/dashboard", AuthMiddleware, async (req, res) => {
+  const UserId = req.UserId;
+
+  try {
+    /* ------------------ Stats ------------------ */
+    const totalApplications = await JobApplicationModel.countDocuments({
+      UserId,
+    });
+
+    const activeInterviews = await JobApplicationModel.countDocuments({
+      UserId,
+      status: { $in: ["HR Call", "Interview 1", "Interview 2", "Test"] },
+    });
+
+    const offers = await JobApplicationModel.countDocuments({
+      UserId,
+      status: "Offer",
+    });
+
+    /* ------------------ Status Breakdown ------------------ */
+    const statusAggregation = await JobApplicationModel.aggregate([
+      { $match: { UserId } },
+      { $group: { _id: "$status", total: { $sum: 1 } } },
+      { $project: { _id: 0, name: "$_id", total: 1 } },
+    ]);
+
+    /* ------------------ Recent Jobs ------------------ */
+    const recentJobs = await JobApplicationModel.find(
+      { UserId },
+      {
+        JobTitle: 1,
+        company: 1,
+        status: 1,
+        appliedDate: 1,
+      }
+    )
+      .sort({ appliedDate: -1 })
+      .limit(5);
+
+    /* ------------------ Follow-ups ------------------ */
+  const followUps = await FollowUpReminderModel.find({
+  userId: UserId,
+  sent: false,
+  scheduledFor: { $lte: new Date() },
 })
+.populate("jobId", "company JobTitle status lastUpdate")
+.lean<FollowUpPopulated[]>();
+
+
+    /* ------------------ Response ------------------ */
+    res.status(200).json({
+      stats: {
+        totalApplications,
+        activeInterviews,
+        offers,
+        followUps: followUps.length,
+      },
+
+      statusBreakdown: statusAggregation,
+
+      recentJobs,
+
+      followUps: followUps.map((f) => ({
+  target: f.jobId.company,
+  action: `Follow up for ${f.jobId.JobTitle}`,
+  due: f.scheduledFor,
+}))
+
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
 app.listen(PORT,() => {
      connectDB()
      console.log('MONGO DB Connected')

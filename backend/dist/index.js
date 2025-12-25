@@ -19,6 +19,7 @@ const models_1 = require("./db/models");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = require("./db/config");
 const cors_1 = __importDefault(require("cors"));
+const mongoose_1 = __importDefault(require("mongoose"));
 const app = (0, express_1.default)();
 const PORT = 3001;
 app.use(express_1.default.json());
@@ -87,39 +88,54 @@ app.post('/SignIn', (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 // GET    /jobs/:id          // get single job
 // PUT    /jobs/:id          // update job / status
 // DELETE /jobs/:id          // delete job
-app.post('/job', middleware_1.AuthMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("/job", middleware_1.AuthMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     const UserId = req.UserId;
-    const { success, data } = types_1.JobApplicationSchema.safeParse(req.body);
-    if (!success) {
-        return res.status(403).json({ message: "Invalid inputs" });
-    }
-    try {
-        const existing_job = yield models_1.JobApplicationModel.findOne({
-            JobUrl: data.jobUrl
+    const parsed = types_1.JobApplicationSchema.safeParse(req.body);
+    if (!parsed.success) {
+        return res.status(400).json({
+            message: "Invalid inputs",
+            errors: parsed.error.flatten(),
         });
-        if (existing_job) {
-            return res.status(409).json({ message: "This Job already exists in your dashboard" });
+    }
+    const data = parsed.data;
+    try {
+        // ✅ Only check duplicate if jobUrl exists
+        if (data.jobUrl) {
+            const existingJob = yield models_1.JobApplicationModel.findOne({
+                UserId,
+                JobUrl: data.jobUrl,
+            });
+            if (existingJob) {
+                return res
+                    .status(409)
+                    .json({ message: "This job already exists in your dashboard" });
+            }
         }
-        const new_Job_Application = yield models_1.JobApplicationModel.create({
-            UserId,
-            resumeId: data.resumeId,
+        const newJob = yield models_1.JobApplicationModel.create({
+            UserId: new mongoose_1.default.Types.ObjectId(UserId),
+            resumeId: data.resumeId || undefined,
             JobTitle: data.jobTitle,
             company: data.company,
             location: data.location,
             source: data.source,
-            JobUrl: data.jobUrl,
+            JobUrl: data.jobUrl || undefined,
             status: data.status,
-            appliedDate: data.appliedDate || new Date(),
+            appliedDate: (_a = data.appliedDate) !== null && _a !== void 0 ? _a : new Date(),
             lastUpdate: new Date(),
             followUpDate: data.followUpDate,
             notes: [],
-            timeline: []
+            timeline: [],
         });
-        res.status(200).json({ new_job_id: new_Job_Application._id });
+        return res.status(201).json({
+            new_job_id: newJob._id,
+        });
     }
-    catch (e) {
-        res.status(500).json({ message: 'Something went wrong', });
-        console.log(e);
+    catch (err) {
+        console.error("CREATE JOB ERROR:", err);
+        return res.status(500).json({
+            message: "Database error while creating job",
+        });
     }
 }));
 app.get('/jobs', middleware_1.AuthMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

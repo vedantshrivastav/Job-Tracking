@@ -10,14 +10,19 @@ export const SignInSchema = z.object({
     password : z.string().min(3).max(10) 
 })
 export const JobApplicationSchema = z.object({
-    UserId: z.string(),
   resumeId: z.string().optional(),
 
-  jobTitle: z.string().min(1),
-  company: z.string().min(1),
+  jobTitle: z.string().min(1, "Job title is required"),
+  company: z.string().min(1, "Company is required"),
+
   location: z.string().optional(),
   source: z.string().optional(),
-  jobUrl: z.string().url().optional(),
+
+  jobUrl: z
+    .string()
+    .url("Invalid job URL")
+    .optional()
+    .or(z.literal("")),
 
   status: z.enum([
     "Applied",
@@ -27,13 +32,12 @@ export const JobApplicationSchema = z.object({
     "Test",
     "Rejected",
     "Offer",
-    "Ghosted"
-  ]).default("Applied"),
+    "Ghosted",
+  ]),
 
   appliedDate: z.coerce.date().optional(),
-  lastUpdate: z.coerce.date().optional(),
   followUpDate: z.coerce.date().optional(),
 
   notes: z.array(z.string()).optional(),
-  timeline: z.array(z.string()).optional()
-})
+  timeline: z.array(z.string()).optional(),
+});

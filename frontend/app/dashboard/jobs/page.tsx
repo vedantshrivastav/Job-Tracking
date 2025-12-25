@@ -1,10 +1,10 @@
 "use client";
 
-import { SearchIcon } from "lucide-react";
+import { SearchIcon, XIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
-
+import toast, { Toaster } from "react-hot-toast";
 /* ---------------- TYPES ---------------- */
 
 type JobFromBackend = {
@@ -54,6 +54,10 @@ const normalizeJobs = (jobs: JobFromBackend[]): JobUI[] => {
   }));
 };
 
+const Spinner = () => (
+  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+);
+
 /* ---------------- COMPONENT ---------------- */
 
 const RenderJobs = () => {
@@ -68,6 +72,47 @@ const RenderJobs = () => {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [form, setForm] = useState({
+    jobTitle: "",
+    company: "",
+    location: "",
+    source: "",
+    jobUrl: "",
+    status: "Applied",
+    appliedDate: "",
+    followUpDate: "",
+    resumeId: "",
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleAddJob = async () => {
+    try {
+      setLoading(true);
+
+      const token = localStorage.getItem("token");
+
+      await axios.post("http://localhost:3001/job", form, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      toast.success("Job added successfully");
+      setIsModalOpen(false); // ✅ close only on success
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to add job");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredJobs = useMemo(() => {
     return jobs.filter((job) => {
@@ -97,7 +142,10 @@ const RenderJobs = () => {
             All your tracked applications in one place.
           </p>
         </div>
-        <button className="bg-zinc-900 text-white text-sm font-semibold px-4 py-2 rounded-md hover:bg-zinc-800 shadow-sm">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-zinc-900 text-white text-sm font-semibold px-4 py-2 rounded-md hover:bg-zinc-800 shadow-sm"
+        >
           + Add Job
         </button>
       </div>
@@ -157,6 +205,123 @@ const RenderJobs = () => {
         </div>
       ) : (
         <p className="text-sm text-zinc-500 text-center">No jobs found.</p>
+      )}
+      {/*MODAL */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-white w-full max-w-lg rounded-xl shadow-xl p-6 relative">
+            {/* Close */}
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-600"
+            >
+              <XIcon size={18} />
+            </button>
+
+            {/* Header */}
+            <div className="mb-6">
+              <h2 className="text-lg font-bold text-zinc-900">Add Job</h2>
+              <p className="text-sm text-zinc-500">
+                Track a new job application
+              </p>
+            </div>
+
+            {/* Form */}
+            <div className="space-y-4">
+              <input
+                name="jobTitle"
+                placeholder="Job Title"
+                onChange={handleChange}
+                className="w-full border border-zinc-200 px-3 py-2 rounded-md text-sm focus:ring-1 focus:ring-zinc-900 focus:outline-none"
+              />
+
+              <input
+                name="company"
+                placeholder="Company"
+                onChange={handleChange}
+                className="w-full border border-zinc-200 px-3 py-2 rounded-md text-sm focus:ring-1 focus:ring-zinc-900 focus:outline-none"
+              />
+
+              <div className="grid grid-cols-2 gap-3">
+                <input
+                  name="location"
+                  placeholder="Location"
+                  onChange={handleChange}
+                  className="border border-zinc-200 px-3 py-2 rounded-md text-sm focus:ring-1 focus:ring-zinc-900 focus:outline-none"
+                />
+                <input
+                  name="source"
+                  placeholder="Source (LinkedIn, Referral)"
+                  onChange={handleChange}
+                  className="border border-zinc-200 px-3 py-2 rounded-md text-sm focus:ring-1 focus:ring-zinc-900 focus:outline-none"
+                />
+              </div>
+
+              <input
+                name="jobUrl"
+                placeholder="Job URL"
+                onChange={handleChange}
+                className="w-full border border-zinc-200 px-3 py-2 rounded-md text-sm focus:ring-1 focus:ring-zinc-900 focus:outline-none"
+              />
+
+              <div className="grid grid-cols-3 gap-3">
+                <select
+                  name="status"
+                  onChange={handleChange}
+                  className="border border-zinc-200 px-3 py-2 rounded-md text-sm focus:ring-1 focus:ring-zinc-900 focus:outline-none"
+                >
+                  <option>Applied</option>
+                  <option>Interviewing</option>
+                  <option>Offer</option>
+                  <option>Rejected</option>
+                </select>
+
+                <input
+                  type="date"
+                  name="appliedDate"
+                  onChange={handleChange}
+                  className="border border-zinc-200 px-3 py-2 rounded-md text-sm focus:ring-1 focus:ring-zinc-900 focus:outline-none"
+                />
+
+                <input
+                  type="date"
+                  name="followUpDate"
+                  onChange={handleChange}
+                  className="border border-zinc-200 px-3 py-2 rounded-md text-sm focus:ring-1 focus:ring-zinc-900 focus:outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="flex justify-end gap-3 mt-8">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="px-4 py-2 text-sm border border-zinc-200 rounded-md text-zinc-600 hover:bg-zinc-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddJob}
+                disabled={loading}
+                className={`px-4 py-2 text-sm rounded-md flex items-center justify-center gap-2
+    ${
+      loading
+        ? "bg-zinc-400 cursor-not-allowed"
+        : "bg-zinc-900 hover:bg-zinc-800 text-white"
+    }`}
+              >
+                {loading ? (
+                  <>
+                    <Spinner />
+                    Saving...
+                  </>
+                ) : (
+                  "Save Job"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -5,6 +5,7 @@ import { FollowUpReminderModel, JobApplicationModel, NotesModel, TimelineModel, 
 import jwt from 'jsonwebtoken'
 import { connectDB } from './db/config'
 import cors from 'cors'
+import mongoose from 'mongoose'
 const app = express()
 const PORT = 3001
 app.use(express.json())
@@ -96,41 +97,62 @@ app.post('/SignIn',async(req,res) => {
 // PUT    /jobs/:id          // update job / status
 // DELETE /jobs/:id          // delete job
 
-app.post('/job',AuthMiddleware,async(req,res) => {
-    const UserId = req.UserId
-    const {success,data} = JobApplicationSchema.safeParse(req.body)
-    if(!success){
-        return res.status(403).json({message : "Invalid inputs"})
+app.post("/job", AuthMiddleware, async (req, res) => {
+  const UserId = req.UserId;
+
+  const parsed = JobApplicationSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({
+      message: "Invalid inputs",
+      errors: parsed.error.flatten(),
+    });
+  }
+
+  const data = parsed.data;
+
+  try {
+    // ✅ Only check duplicate if jobUrl exists
+    if (data.jobUrl) {
+      const existingJob = await JobApplicationModel.findOne({
+        UserId,
+        JobUrl: data.jobUrl,
+      });
+
+      if (existingJob) {
+        return res
+          .status(409)
+          .json({ message: "This job already exists in your dashboard" });
+      }
     }
-    try{
-        const existing_job = await JobApplicationModel.findOne({
-            JobUrl : data.jobUrl
-        })
-        if(existing_job){
-            return res.status(409).json({message : "This Job already exists in your dashboard"})
-        }
-      const new_Job_Application = await JobApplicationModel.create({
-      UserId,
-      resumeId: data.resumeId,
-      JobTitle: data.jobTitle,
-      company: data.company,
-      location: data.location,
-      source: data.source,
-      JobUrl: data.jobUrl,
-      status: data.status,
-      appliedDate: data.appliedDate || new Date(),
-      lastUpdate: new Date(),
-      followUpDate: data.followUpDate,
-      notes: [],
-      timeline: []
-    })
-       res.status(200).json({new_job_id : new_Job_Application._id})
-    }
-    catch(e){
-         res.status(500).json({message : 'Something went wrong',})
-         console.log(e)
-    }
-})
+
+   const newJob = await JobApplicationModel.create({
+  UserId: new mongoose.Types.ObjectId(UserId),
+  resumeId: data.resumeId || undefined,
+  JobTitle: data.jobTitle,
+  company: data.company,
+  location: data.location,
+  source: data.source,
+  JobUrl: data.jobUrl || undefined,
+  status: data.status,
+  appliedDate: data.appliedDate ?? new Date(),
+  lastUpdate: new Date(),
+  followUpDate: data.followUpDate,
+  notes: [],
+  timeline: [],
+});
+
+
+    return res.status(201).json({
+      new_job_id: newJob._id,
+    });
+  } catch (err) {
+    console.error("CREATE JOB ERROR:", err);
+    return res.status(500).json({
+      message: "Database error while creating job",
+    });
+  }
+});
+
 
 app.get('/jobs',AuthMiddleware,async(req,res) => {
     const UserId = req.UserId

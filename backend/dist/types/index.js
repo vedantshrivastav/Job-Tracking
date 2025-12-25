@@ -15,13 +15,16 @@ exports.SignInSchema = zod_1.default.object({
     password: zod_1.default.string().min(3).max(10)
 });
 exports.JobApplicationSchema = zod_1.default.object({
-    UserId: zod_1.default.string(),
     resumeId: zod_1.default.string().optional(),
-    jobTitle: zod_1.default.string().min(1),
-    company: zod_1.default.string().min(1),
+    jobTitle: zod_1.default.string().min(1, "Job title is required"),
+    company: zod_1.default.string().min(1, "Company is required"),
     location: zod_1.default.string().optional(),
     source: zod_1.default.string().optional(),
-    jobUrl: zod_1.default.string().url().optional(),
+    jobUrl: zod_1.default
+        .string()
+        .url("Invalid job URL")
+        .optional()
+        .or(zod_1.default.literal("")),
     status: zod_1.default.enum([
         "Applied",
         "HR Call",
@@ -30,11 +33,10 @@ exports.JobApplicationSchema = zod_1.default.object({
         "Test",
         "Rejected",
         "Offer",
-        "Ghosted"
-    ]).default("Applied"),
+        "Ghosted",
+    ]),
     appliedDate: zod_1.default.coerce.date().optional(),
-    lastUpdate: zod_1.default.coerce.date().optional(),
     followUpDate: zod_1.default.coerce.date().optional(),
     notes: zod_1.default.array(zod_1.default.string()).optional(),
-    timeline: zod_1.default.array(zod_1.default.string()).optional()
+    timeline: zod_1.default.array(zod_1.default.string()).optional(),
 });

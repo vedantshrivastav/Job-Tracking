@@ -88,11 +88,12 @@ export default function DashboardPage() {
       data.statusBreakdown.map((s) => [s.name, s.total])
     );
 
-    return STATUS_ORDER.filter((status) => statusMap[status] > 0) // 👈 remove zero-count statuses
-      .map((status) => ({
+    return STATUS_ORDER.filter((status) => statusMap[status] > 0).map(
+      (status) => ({
         name: status,
         total: statusMap[status],
-      }));
+      })
+    );
   }, [data]);
 
   const stats = useMemo(() => {

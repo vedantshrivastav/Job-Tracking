@@ -364,10 +364,11 @@ app.get("/dashboard", middleware_1.AuthMiddleware, (req, res) => __awaiter(void 
         });
         /* ------------------ Status Breakdown ------------------ */
         const statusAggregation = yield models_1.JobApplicationModel.aggregate([
-            { $match: { UserId } },
+            { $match: { UserId: new mongoose_1.default.Types.ObjectId(UserId) } },
             { $group: { _id: "$status", total: { $sum: 1 } } },
             { $project: { _id: 0, name: "$_id", total: 1 } },
         ]);
+        console.log("STATUS AGG RAW:", statusAggregation);
         /* ------------------ Recent Jobs ------------------ */
         const recentJobs = yield models_1.JobApplicationModel.find({ UserId }, {
             JobTitle: 1,

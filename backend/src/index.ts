@@ -388,10 +388,11 @@ app.get("/dashboard", AuthMiddleware, async (req, res) => {
 
     /* ------------------ Status Breakdown ------------------ */
     const statusAggregation = await JobApplicationModel.aggregate([
-      { $match: { UserId } },
+      { $match: { UserId : new mongoose.Types.ObjectId(UserId) } },
       { $group: { _id: "$status", total: { $sum: 1 } } },
       { $project: { _id: 0, name: "$_id", total: 1 } },
     ]);
+    console.log("STATUS AGG RAW:", statusAggregation);
 
     /* ------------------ Recent Jobs ------------------ */
     const recentJobs = await JobApplicationModel.find(
@@ -417,6 +418,8 @@ app.get("/dashboard", AuthMiddleware, async (req, res) => {
 
 
     /* ------------------ Response ------------------ */
+
+
     res.status(200).json({
       stats: {
         totalApplications,

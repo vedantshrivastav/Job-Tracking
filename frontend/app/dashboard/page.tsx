@@ -16,10 +16,20 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 /* ---------------- Types ---------------- */
+const STATUS_ORDER = [
+  "Applied",
+  "HR Call",
+  "Interview 1",
+  "Interview 2",
+  "Test",
+  "Offer",
+  "Rejected",
+  "Ghosted",
+];
 
 type StatusCount = {
-  _id: string;
-  count: number;
+  name: string;
+  total: number;
 };
 
 type RecentJob = {
@@ -29,11 +39,22 @@ type RecentJob = {
   appliedDate: string;
 };
 
-type DashboardResponse = {
+type DashboardStats = {
   totalApplications: number;
+  activeInterviews: number;
+  offers: number;
+  followUps: number;
+};
+
+type DashboardResponse = {
+  stats: DashboardStats;
   statusBreakdown: StatusCount[];
-  followUpDues: number;
   recentJobs: RecentJob[];
+  followUps: {
+    target: string;
+    action: string;
+    due: string;
+  }[];
 };
 
 /* ---------------- API ---------------- */
@@ -62,10 +83,15 @@ export default function DashboardPage() {
 
   const STATUS_DATA = useMemo(() => {
     if (!data) return [];
-    return data.statusBreakdown.map((s) => ({
-      name: s._id,
-      total: s.count,
-    }));
+    console.log("this is called", data.statusBreakdown);
+    return STATUS_ORDER.map((status) => {
+      const match = data.statusBreakdown.find((s) => s.name === status);
+
+      return {
+        name: status,
+        total: match ? match.total : 0,
+      };
+    });
   }, [data]);
 
   const stats = useMemo(() => {
@@ -74,12 +100,12 @@ export default function DashboardPage() {
     return [
       {
         label: "Total Applications",
-        value: data.totalApplications,
+        value: data.stats.totalApplications,
         change: "",
       },
       {
         label: "Follow-ups",
-        value: data.followUpDues,
+        value: data.stats.followUps,
         change: "Requires action",
       },
     ];
@@ -132,7 +158,16 @@ export default function DashboardPage() {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={STATUS_DATA}>
                 <CartesianGrid vertical={false} stroke="#f4f4f5" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                <XAxis
+                  dataKey="name"
+                  axisLine={false}
+                  tickLine={false}
+                  interval={0} // show ALL labels
+                  angle={-35} // rotate labels
+                  textAnchor="end"
+                  height={60} // extra space for rotated text
+                  tick={{ fontSize: 11 }} // smaller font fits better
+                />
                 <YAxis hide />
                 <Tooltip />
                 <Bar dataKey="total" fill="#18181b" radius={[4, 4, 0, 0]} />

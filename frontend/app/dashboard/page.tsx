@@ -83,15 +83,16 @@ export default function DashboardPage() {
 
   const STATUS_DATA = useMemo(() => {
     if (!data) return [];
-    console.log("this is called", data.statusBreakdown);
-    return STATUS_ORDER.map((status) => {
-      const match = data.statusBreakdown.find((s) => s.name === status);
 
-      return {
+    const statusMap = Object.fromEntries(
+      data.statusBreakdown.map((s) => [s.name, s.total])
+    );
+
+    return STATUS_ORDER.filter((status) => statusMap[status] > 0) // 👈 remove zero-count statuses
+      .map((status) => ({
         name: status,
-        total: match ? match.total : 0,
-      };
-    });
+        total: statusMap[status],
+      }));
   }, [data]);
 
   const stats = useMemo(() => {

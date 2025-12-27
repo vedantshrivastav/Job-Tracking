@@ -1,43 +1,25 @@
-import type { ReactNode } from "react";
+"use client";
+import { useEffect, type ReactNode } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.replace("/signup");
+    }
+  }, []);
+  const handleSignOut = () => {
+    localStorage.removeItem("token");
+    queryClient.clear();
+    router.replace("/");
+  };
   return (
     <div className="flex min-h-screen bg-zinc-50">
-      {/* Sidebar */}
-      {/* <aside className="w-64 border-r border-zinc-200 bg-white">
-        <div className="p-6 font-bold text-lg text-zinc-900">Job Tracker</div>
-
-        <nav className="px-4 space-y-1 text-sm">
-          <Link
-            href="/dashboard"
-            className="block rounded-md px-3 py-2 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
-          >
-            Dashboard
-          </Link>
-
-          <Link
-            href="/dashboard/jobs"
-            className="block rounded-md px-3 py-2 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
-          >
-            Jobs
-          </Link>
-
-          <Link
-            href="/dashboard/analytics"
-            className="block rounded-md px-3 py-2 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
-          >
-            Analytics
-          </Link>
-
-          <Link
-            href="/dashboard/follow-ups"
-            className="block rounded-md px-3 py-2 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
-          >
-            Follow Ups
-          </Link>
-        </nav>
-      </aside> */}
       <aside className="w-64 border-r border-zinc-200 bg-white hidden md:flex flex-col">
         <div className="p-6">
           <div className="flex items-center gap-2 mb-8 cursor-pointer">
@@ -59,7 +41,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         </div>
 
         <div className="mt-auto p-6 border-t border-zinc-100">
-          <button className="flex items-center gap-3 text-sm text-zinc-500 hover:text-zinc-900 w-full transition-colors">
+          <button
+            onClick={handleSignOut}
+            className="flex items-center gap-3 text-sm text-zinc-500 hover:text-zinc-900 w-full transition-colors cursor-pointer"
+          >
             <ExitIcon />
             <span>Sign out</span>
           </button>

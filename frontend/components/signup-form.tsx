@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type AuthMode = "signup" | "login";
@@ -60,6 +60,13 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      router.replace("/dashboard");
+    }
+  }, []);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -186,7 +193,13 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
             </Field>
             <FieldGroup>
               <Field>
-                <Button type="submit">Log In</Button>
+                <Button
+                  onClick={() => console.log("Button clicked")}
+                  className="cursor-pointer"
+                  type="submit"
+                >
+                  Log In
+                </Button>
                 <FieldDescription className="px-6 text-center">
                   <button type="button" onClick={() => setmode("signup")}>
                     Don&apos;t have an account? <a href="#">Sign Up</a>

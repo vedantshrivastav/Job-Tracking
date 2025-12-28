@@ -106,29 +106,30 @@ const StageIndicator = ({ status }: { status: string }) => {
 };
 
 const STATUS_STYLES: Record<string, string> = {
-  Applied: "bg-zinc-50 text-zinc-600 border-zinc-100",
+  Applied: "bg-zinc-100 text-zinc-600",
 
-  "HR Call": "bg-indigo-50 text-indigo-600 border-indigo-100",
+  "HR Call": "bg-indigo-100 text-indigo-600",
 
-  "Interview 1": "bg-blue-50 text-blue-600 border-blue-100",
-  "Interview 2": "bg-blue-50 text-blue-600 border-blue-100",
+  "Interview 1": "bg-blue-100 text-blue-600",
+  "Interview 2": "bg-blue-100 text-blue-600",
 
-  Test: "bg-purple-50 text-purple-600 border-purple-100",
+  Test: "bg-purple-100 text-purple-600",
 
-  Offer: "bg-green-50 text-green-600 border-green-100",
+  Interviewing: "bg-blue-100 text-blue-600",
 
-  Rejected: "bg-red-50 text-red-600 border-red-100",
+  Offer: "bg-green-100 text-green-600",
 
-  Ghosted: "bg-zinc-100 text-zinc-500 border-zinc-200",
+  Rejected: "bg-red-100 text-red-600",
+
+  Ghosted: "bg-zinc-200 text-zinc-500",
 };
 
 const StatusBadge = ({ status }: { status: string }) => {
-  const style =
-    STATUS_STYLES[status] ?? "bg-zinc-50 text-zinc-600 border-zinc-100";
+  const style = STATUS_STYLES[status] ?? "bg-zinc-100 text-zinc-600";
 
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold ${style}`}
+      className={`inline-flex items-center rounded px-2 py-0.5 text-[10px] font-bold tracking-wider self-start ${style}`}
     >
       {status.toUpperCase()}
     </span>

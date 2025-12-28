@@ -35,15 +35,24 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             <NavItem icon={<DashboardIcon />} label="Dashboard" />
             <NavItem icon={<JobsIcon />} label="jobs" />
             <NavItem icon={<FollowUpIcon />} label="follow-ups" />
-            <NavItem icon={<AnalyticsIcon />} label="Analytics" />
             <NavItem icon={<SettingsIcon />} label="Settings" />
           </nav>
         </div>
 
-        <div className="mt-auto p-6 border-t border-zinc-100">
+        <div className="mt-auto p-6 border-t border-zinc-200">
           <button
             onClick={handleSignOut}
-            className="flex items-center gap-3 text-sm text-zinc-500 hover:text-zinc-900 w-full transition-colors cursor-pointer"
+            className="
+   flex items-center justify-center gap-3 w-full
+      rounded-md px-3 py-2
+      bg-zinc-100
+      text-sm text-zinc-700
+      transition-colors duration-150
+      hover:bg-zinc-200 hover:text-zinc-900
+      active:bg-zinc-300
+      focus:outline-none focus:ring-2 focus:ring-zinc-300
+      cursor-pointer
+  "
           >
             <ExitIcon />
             <span>Sign out</span>
@@ -217,12 +226,14 @@ const NavItem = ({
   active?: boolean;
   onClick?: () => void;
 }) => {
-  const link = label === "dashboard" ? `/dashboard` : `/dashboard/${label}`;
+  const slug = label.trim().toLowerCase();
+
+  const link = slug === "dashboard" ? "/dashboard" : `/dashboard/${slug}`;
   return (
     <Link href={`${link}`}>
       <button
         onClick={onClick}
-        className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+        className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer ${
           active
             ? "bg-zinc-100 text-zinc-900"
             : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50"

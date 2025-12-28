@@ -133,7 +133,7 @@ const RenderJobs = () => {
   if (isError) return <p>Failed to load jobs</p>;
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-8 p-6 overflow-y-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -144,7 +144,7 @@ const RenderJobs = () => {
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-zinc-900 text-white text-sm font-semibold px-4 py-2 rounded-md hover:bg-zinc-800 shadow-sm"
+          className="bg-zinc-900 text-white text-sm font-semibold px-4 py-2 rounded-md hover:bg-zinc-800 shadow-sm cursor-pointer"
         >
           + Add Job
         </button>

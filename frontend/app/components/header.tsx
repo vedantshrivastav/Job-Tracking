@@ -38,7 +38,7 @@ export const Header = () => {
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.push("/signup")}
-            className="text-sm font-medium bg-zinc-900 text-white hover:bg-zinc-800 px-4 py-1.5 rounded-md transition-all shadow-sm"
+            className="text-sm font-medium cursor-pointer bg-zinc-900 text-white hover:bg-zinc-800 px-4 py-1.5 rounded-md transition-all shadow-sm"
           >
             Sign Up
           </button>

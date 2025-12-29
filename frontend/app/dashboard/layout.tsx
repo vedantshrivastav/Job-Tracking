@@ -19,8 +19,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     router.replace("/");
   };
   return (
-    <div className="flex min-h-screen bg-zinc-50">
-      <aside className="w-64 border-r border-zinc-200 bg-white hidden md:flex flex-col">
+    <div className="flex h-screen bg-zinc-50">
+      <aside className="w-64 shrink border-r border-zinc-200 bg-white hidden md:flex flex-col">
         <div className="p-6">
           <div className="flex items-center gap-2 mb-8 cursor-pointer">
             <div className="w-6 h-6 bg-zinc-900 rounded flex items-center justify-center">

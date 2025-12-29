@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -158,6 +158,27 @@ export default function DashboardPage() {
     queryFn: fetchDashboard,
   });
 
+  const [isfollowupModalopen, setisfollowupModalopen] = useState(false);
+  const [action, setAction] = useState("");
+  const [target, setTarget] = useState("");
+  const [due, setDue] = useState("");
+
+  useEffect(() => {
+    if (isfollowupModalopen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isfollowupModalopen]);
+
+  const handleModal = () => {
+    console.log("");
+    setisfollowupModalopen(false);
+  };
   /* ---------- Derived UI data ---------- */
 
   const STATUS_DATA = useMemo(() => {
@@ -227,12 +248,16 @@ export default function DashboardPage() {
             key={stat.label}
             className="bg-white border border-zinc-200 rounded-lg p-6 shadow-sm"
           >
-            <p className="text-xs font-medium text-zinc-500 uppercase mono mb-2">
+            <p className="text-xs text-zinc-500 uppercase font-mono mb-2 tracking-wide">
               {stat.label}
             </p>
-            <p className="text-3xl font-bold text-zinc-900">{stat.value}</p>
+            <p className="text-3xl font-bold font-mono text-zinc-900">
+              {stat.value}
+            </p>
             {stat.change && (
-              <p className="text-[11px] text-zinc-400">{stat.change}</p>
+              <p className="text-[11px] text-zinc-400 font-medium">
+                {stat.change}
+              </p>
             )}
           </div>
         ))}
@@ -242,7 +267,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Status Breakdown */}
         <div className="bg-white border rounded-lg p-6">
-          <h4 className="text-xs font-bold text-zinc-400 uppercase mono mb-4">
+          <h4 className="text-xs font-bold text-zinc-400 uppercase font-mono mb-4">
             Status Breakdown
           </h4>
           <div className="h-[200px]">
@@ -267,7 +292,7 @@ export default function DashboardPage() {
           </div>
         </div>
         <div className="bg-white border border-zinc-200 rounded-lg p-6 shadow-sm">
-          <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mono mb-6">
+          <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider font-mono mb-6">
             Activity (Apps/Week)
           </h4>
           <div className="h-[200px] w-full relative">
@@ -311,14 +336,14 @@ export default function DashboardPage() {
           </div>
         </div>
         <div className="bg-white border border-zinc-200 rounded-lg p-6 shadow-sm">
-          <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mono mb-6">
+          <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider font-mono mb-6">
             Response Funnel
           </h4>
           <div className="space-y-4">
             {FUNNEL_STEPS.map((step, i) => (
               <div key={i} className="group">
                 <div className="flex items-center justify-between text-xs mb-1.5">
-                  <span className="text-zinc-500 font-medium">
+                  <span className="text-zinc-400 font-medium">
                     {step.label}
                   </span>
                   <div className="flex items-center gap-2">
@@ -348,9 +373,15 @@ export default function DashboardPage() {
           <table className="w-full text-sm">
             <thead className="bg-zinc-50">
               <tr>
-                <th className="px-6 py-3 text-left">Role</th>
-                <th className="px-6 py-3 text-left">Status</th>
-                <th className="px-6 py-3 text-right">Date</th>
+                <th className="px-6 py-3 text-left text-zinc-400 font-mono tracking-wider text-[11px]">
+                  ROLE
+                </th>
+                <th className="px-6 py-3 text-left font-mono text-zinc-400 tracking-wider text-[11px]">
+                  STATUS
+                </th>
+                <th className="px-6 py-3 text-right font-mono text-zinc-400 tracking-wider text-[11px]">
+                  DATE
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -393,18 +424,77 @@ export default function DashboardPage() {
                     {task.action}
                   </p>
                   <p className="text-xs text-zinc-500 mt-0.5">{task.target}</p>
-                  <span className="inline-block mt-2 text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 font-bold mono">
+                  <span className="inline-block mt-2 text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 font-bold font-mono">
                     DUE {task.due.toUpperCase()}
                   </span>
                 </div>
               </div>
             ))}
-            <div className="p-4 border border-dashed border-zinc-200 rounded-lg flex items-center justify-center text-zinc-400 text-xs hover:border-zinc-400 hover:text-zinc-900 cursor-pointer transition-all">
+            <button
+              onClick={() => setisfollowupModalopen(true)}
+              className="p-4 w-full border border-dashed border-zinc-200 rounded-lg
+             flex items-center justify-center text-zinc-400 text-xs
+             hover:border-zinc-400 hover:text-zinc-900 transition-all cursor-pointer"
+            >
               + Add new reminder
-            </div>
+            </button>
           </div>
         </div>
       </div>
+      {isfollowupModalopen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* Overlay */}
+          <div
+            onClick={() => setisfollowupModalopen(false)}
+            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+          />
+
+          {/* Modal card */}
+          <div className="relative w-full max-w-sm bg-white rounded-lg p-6 shadow-xl">
+            <h3 className="text-sm font-semibold text-zinc-900">
+              Add reminder
+            </h3>
+
+            <div className="mt-4 space-y-3">
+              <input
+                placeholder="Action (e.g. Send follow-up email)"
+                value={action}
+                onChange={(e) => setAction(e.target.value)}
+                className="w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-200"
+              />
+
+              <input
+                placeholder="Target (e.g. GitHub)"
+                value={target}
+                onChange={(e) => setTarget(e.target.value)}
+                className="w-full rounded-md border px-3 py-2 text-sm"
+              />
+
+              <input
+                type="date"
+                value={due}
+                onChange={(e) => setDue(e.target.value)}
+                className="w-full rounded-md border px-3 py-2 text-sm"
+              />
+            </div>
+
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                onClick={() => setisfollowupModalopen(false)}
+                className="text-xs text-zinc-500 hover:text-zinc-900"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleModal}
+                className="px-3 py-1.5 rounded-md bg-zinc-900 text-white text-xs hover:bg-zinc-800"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

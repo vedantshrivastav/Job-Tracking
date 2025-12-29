@@ -215,12 +215,14 @@ const RenderJobs = () => {
               onClick={() => setIsModalOpen(false)}
               className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-600"
             >
-              <XIcon size={18} />
+              <XIcon className="cursor-pointer" size={18} />
             </button>
 
             {/* Header */}
             <div className="mb-6">
-              <h2 className="text-lg font-bold text-zinc-900">Add Job</h2>
+              <h2 className="text-lg font-bold text-zinc-900 font-mono">
+                TRACK NEW JOB
+              </h2>
               <p className="text-sm text-zinc-500">
                 Track a new job application
               </p>
@@ -228,13 +230,18 @@ const RenderJobs = () => {
 
             {/* Form */}
             <div className="space-y-4">
+              <label className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider font-mono">
+                Role
+              </label>
               <input
                 name="jobTitle"
                 placeholder="Job Title"
                 onChange={handleChange}
                 className="w-full border border-zinc-200 px-3 py-2 rounded-md text-sm focus:ring-1 focus:ring-zinc-900 focus:outline-none"
               />
-
+              <label className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider font-mono">
+                Company
+              </label>
               <input
                 name="company"
                 placeholder="Company"
@@ -243,20 +250,33 @@ const RenderJobs = () => {
               />
 
               <div className="grid grid-cols-2 gap-3">
-                <input
-                  name="location"
-                  placeholder="Location"
-                  onChange={handleChange}
-                  className="border border-zinc-200 px-3 py-2 rounded-md text-sm focus:ring-1 focus:ring-zinc-900 focus:outline-none"
-                />
-                <input
-                  name="source"
-                  placeholder="Source (LinkedIn, Referral)"
-                  onChange={handleChange}
-                  className="border border-zinc-200 px-3 py-2 rounded-md text-sm focus:ring-1 focus:ring-zinc-900 focus:outline-none"
-                />
-              </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider font-mono">
+                    Location
+                  </label>
+                  <input
+                    name="location"
+                    placeholder="Location"
+                    onChange={handleChange}
+                    className="border border-zinc-200 px-3 py-2 rounded-md text-sm focus:ring-1 focus:ring-zinc-900 focus:outline-none"
+                  />
+                </div>
 
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider font-mono">
+                    Source
+                  </label>
+                  <input
+                    name="source"
+                    placeholder="Source (LinkedIn, Referral)"
+                    onChange={handleChange}
+                    className="border border-zinc-200 px-3 py-2 rounded-md text-sm focus:ring-1 focus:ring-zinc-900 focus:outline-none"
+                  />
+                </div>
+              </div>
+              <label className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider font-mono">
+                Job URL
+              </label>
               <input
                 name="jobUrl"
                 placeholder="Job URL"
@@ -265,30 +285,44 @@ const RenderJobs = () => {
               />
 
               <div className="grid grid-cols-3 gap-3">
-                <select
-                  name="status"
-                  onChange={handleChange}
-                  className="border border-zinc-200 px-3 py-2 rounded-md text-sm focus:ring-1 focus:ring-zinc-900 focus:outline-none"
-                >
-                  <option>Applied</option>
-                  <option>Interviewing</option>
-                  <option>Offer</option>
-                  <option>Rejected</option>
-                </select>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider font-mono">
+                    CURRENT STATUS
+                  </label>
+                  <select
+                    name="status"
+                    onChange={handleChange}
+                    className="border border-zinc-200 px-3 py-2 rounded-md text-sm focus:ring-1 focus:ring-zinc-900 focus:outline-none"
+                  >
+                    <option>Applied</option>
+                    <option>Interviewing</option>
+                    <option>Offer</option>
+                    <option>Rejected</option>
+                  </select>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider font-mono">
+                    APPLIED DATE
+                  </label>
+                  <input
+                    type="date"
+                    name="appliedDate"
+                    onChange={handleChange}
+                    className="border border-zinc-200 px-3 py-2 rounded-md text-sm focus:ring-1 focus:ring-zinc-900 focus:outline-none"
+                  />
+                </div>
 
-                <input
-                  type="date"
-                  name="appliedDate"
-                  onChange={handleChange}
-                  className="border border-zinc-200 px-3 py-2 rounded-md text-sm focus:ring-1 focus:ring-zinc-900 focus:outline-none"
-                />
-
-                <input
-                  type="date"
-                  name="followUpDate"
-                  onChange={handleChange}
-                  className="border border-zinc-200 px-3 py-2 rounded-md text-sm focus:ring-1 focus:ring-zinc-900 focus:outline-none"
-                />
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider font-mono">
+                    FOLLOW-UP DATE
+                  </label>
+                  <input
+                    type="date"
+                    name="followUpDate"
+                    onChange={handleChange}
+                    className="border border-zinc-200 px-3 py-2 rounded-md text-sm focus:ring-1 focus:ring-zinc-900 focus:outline-none"
+                  />
+                </div>
               </div>
             </div>
 
@@ -296,7 +330,7 @@ const RenderJobs = () => {
             <div className="flex justify-end gap-3 mt-8">
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 text-sm border border-zinc-200 rounded-md text-zinc-600 hover:bg-zinc-50"
+                className="px-4 py-2 text-sm border border-zinc-200 rounded-md text-zinc-600 hover:bg-zinc-50 cursor-pointer"
               >
                 Cancel
               </button>
@@ -307,7 +341,7 @@ const RenderJobs = () => {
     ${
       loading
         ? "bg-zinc-400 cursor-not-allowed"
-        : "bg-zinc-900 hover:bg-zinc-800 text-white"
+        : "bg-zinc-900 hover:bg-zinc-800 text-white cursor-pointer"
     }`}
               >
                 {loading ? (

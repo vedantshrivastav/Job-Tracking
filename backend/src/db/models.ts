@@ -92,7 +92,6 @@ const FollowUpReminderSchema = new mongoose.Schema(
   {
     jobId: { type: mongoose.Schema.Types.ObjectId, ref: "JobApplication", required: true },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-
     scheduledFor: Date,
     sent: { type: Boolean, default: false },
     sentAt: Date,

@@ -11,17 +11,8 @@ const SettingsView: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-        {/* Settings Sidebar */}
-        <nav className="space-y-1 col-span-1">
-          <SettingsNavItem label="General" active />
-          <SettingsNavItem label="Security" />
-          <SettingsNavItem label="Notifications" />
-          <SettingsNavItem label="Workspace" />
-          <SettingsNavItem label="Billing" />
-        </nav>
-
         {/* Settings Content */}
-        <div className="col-span-1 md:col-span-3 space-y-10">
+        <div className="col-span-1 md:col-span-3 space-y-10 pl-4 md:pl-8">
           {/* Profile Section */}
           <section className="space-y-6">
             <h3 className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider mono">

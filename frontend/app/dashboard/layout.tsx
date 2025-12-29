@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
@@ -7,6 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const [IsSidebarVisible, setIsSidebarVisible] = useState(false);
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -20,7 +21,15 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   };
   return (
     <div className="flex h-screen bg-zinc-50">
-      <aside className="w-64 shrink border-r border-zinc-200 bg-white hidden md:flex flex-col">
+      <aside
+        className={`
+    fixed md:relative z-40 h-full w-64
+    bg-white border-r border-zinc-200
+    flex flex-col overflow-hidden
+    transform transition-transform duration-300 ease-out will-change-transform
+    ${IsSidebarVisible ? "translate-x-0" : "-translate-x-full"}
+  `}
+      >
         <div className="p-6">
           <div className="flex items-center gap-2 mb-8 cursor-pointer">
             <div className="w-6 h-6 bg-zinc-900 rounded flex items-center justify-center">
@@ -59,9 +68,42 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </button>
         </div>
       </aside>
+      <div
+        className={`flex flex-col flex-1
+      transition-[margin] duration-300 ease-out
+      ${IsSidebarVisible ? "md:ml-64" : "md:ml-0"}
+      `}
+      >
+        <header className="h-16 border-b border-zinc-200 bg-white flex items-center justify-between px-8 shrink-0">
+          <div className="flex items-center gap-4">
+            {/* Dynamic Sidebar Toggle Button */}
+            <button
+              onClick={() => setIsSidebarVisible(!IsSidebarVisible)}
+              className="p-2 -ml-2 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 rounded-md transition-all"
+              title={IsSidebarVisible ? "Hide Sidebar" : "Show Sidebar"}
+            >
+              <PanelIcon className={IsSidebarVisible ? "rotate-180" : ""} />
+            </button>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-4">{children}</main>
+            <div className="flex items-center gap-2 text-xs text-zinc-400 mono">
+              <span className="hidden sm:inline">/ workspace</span>
+              {/* <span>/ {activeTab}</span> */}
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <button className="p-2 text-zinc-400 hover:text-zinc-900">
+              <SearchIcon />
+            </button>
+            <div className="w-8 h-8 rounded-full bg-zinc-200 border border-zinc-300 cursor-pointer overflow-hidden hover:opacity-80 transition-opacity">
+              <div className="w-full h-full bg-zinc-100 flex items-center justify-center text-[10px] font-bold text-zinc-500">
+                JS
+              </div>
+            </div>
+          </div>
+        </header>
+        {/* Main Content */}
+        <main className="flex-1 overflow-y-auto p-4">{children}</main>
+      </div>
     </div>
   );
 }
@@ -212,6 +254,21 @@ const CloseIcon = () => (
       strokeLinejoin="round"
       strokeWidth="2"
       d="M6 18L18 6M6 6l12 12"
+    ></path>
+  </svg>
+);
+const PanelIcon = ({ className = "" }: { className?: string }) => (
+  <svg
+    className={`w-5 h-5 transition-transform duration-300 ${className}`}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M4 6h16M4 12h10M4 18h16"
     ></path>
   </svg>
 );

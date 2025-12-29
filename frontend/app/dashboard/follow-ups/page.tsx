@@ -68,6 +68,7 @@ const FollowUpsView: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     async function fetchFollowUps() {
@@ -135,7 +136,10 @@ const FollowUpsView: React.FC = () => {
             Track and manage upcoming follow-ups with recruiters.
           </p>
         </div>
-        <button className="bg-zinc-900 text-white text-sm font-semibold px-4 py-2 rounded-md hover:bg-zinc-800 transition-colors shadow-sm self-start">
+        <button
+          onClick={() => setModalOpen(true)}
+          className="bg-zinc-900 text-white text-sm font-semibold px-4 py-2 rounded-md hover:bg-zinc-800 transition-colors shadow-sm self-start"
+        >
           + Add Follow-Up
         </button>
       </div>
@@ -250,9 +254,89 @@ const FollowUpsView: React.FC = () => {
               Add follow-ups to stay on top of your applications.
             </p>
           </div>
-          <button className="bg-zinc-900 text-white text-xs font-semibold px-4 py-2 rounded-md hover:bg-zinc-800 transition-colors shadow-sm">
+          <button
+            onClick={() => {
+              setModalOpen(true);
+            }}
+            className="bg-zinc-900 text-white text-xs font-semibold px-4 py-2 rounded-md hover:bg-zinc-800 transition-colors shadow-sm cursor-pointer"
+          >
             Add Follow-Up
           </button>
+        </div>
+      )}
+      {modalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden border border-zinc-200">
+            <div className="px-6 py-4 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/50">
+              <h2 className="text-sm font-bold text-zinc-900 uppercase tracking-widest font-mono">
+                New Follow-up
+              </h2>
+              <button
+                onClick={() => setModalOpen(false)}
+                className="text-zinc-400 hover:text-zinc-900 p-1"
+              >
+                <CloseIcon />
+              </button>
+            </div>
+            <div className="p-6 space-y-5">
+              <div className="space-y-2">
+                <label className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider font-mono">
+                  Target Application
+                </label>
+                <select className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-md text-sm text-zinc-900 focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400 transition-all">
+                  <option>Select an active application...</option>
+                  <option>Senior Frontend Engineer @ Linear</option>
+                  <option>Fullstack Developer @ Vercel</option>
+                  <option>Software Engineer @ Railway</option>
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider font-mono">
+                    Follow-up Date
+                  </label>
+                  <input
+                    type="date"
+                    className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-md text-sm text-zinc-900 focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400 transition-all"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider font-mono">
+                    Priority
+                  </label>
+                  <select className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-md text-sm text-zinc-900 focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400 transition-all">
+                    <option>Normal</option>
+                    <option>High</option>
+                    <option>Urgent</option>
+                  </select>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider font-mono">
+                  Notes / Reminder Message
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="e.g. Check in with recruiter about the take-home test result..."
+                  className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-md text-sm placeholder:text-zinc-400 focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400 transition-all resize-none"
+                ></textarea>
+              </div>
+            </div>
+            <div className="px-6 py-4 bg-zinc-50 border-t border-zinc-100 flex justify-end gap-3">
+              <button
+                onClick={() => setModalOpen(false)}
+                className="px-4 py-2 text-xs font-semibold text-zinc-600 hover:text-zinc-900 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => setModalOpen(false)}
+                className="px-6 py-2 bg-zinc-900 text-white text-xs font-bold rounded-md hover:bg-zinc-800 transition-all shadow-sm cursor-pointer"
+              >
+                Schedule Task
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
@@ -324,5 +408,20 @@ function getFollowUpStatus(
   if (sent) return "Completed";
   return new Date(scheduledFor) < new Date() ? "Overdue" : "Upcoming";
 }
+const CloseIcon = () => (
+  <svg
+    className="w-4 h-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M6 18L18 6M6 6l12 12"
+    ></path>
+  </svg>
+);
 
 export default FollowUpsView;

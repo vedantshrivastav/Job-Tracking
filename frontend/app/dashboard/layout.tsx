@@ -23,11 +23,15 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     <div className="flex h-screen bg-zinc-50">
       <aside
         className={`
-    fixed md:relative z-40 h-full w-64
-    bg-white border-r border-zinc-200
-    flex flex-col overflow-hidden
-    transform transition-transform duration-300 ease-out will-change-transform
-    ${IsSidebarVisible ? "translate-x-0" : "-translate-x-full"}
+     fixed md:relative z-40 h-full
+          bg-white flex flex-col
+          transition-all duration-300 ease-in-out
+          ${
+            IsSidebarVisible
+              ? "w-64 border-r border-zinc-200 opacity-100"
+              : "w-0 opacity-0 border-r-0 pointer-events-none"
+          }
+          overflow-hidden
   `}
       >
         <div className="p-6">
@@ -69,10 +73,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         </div>
       </aside>
       <div
-        className={`flex flex-col flex-1
-      transition-[margin] duration-300 ease-out
-      ${IsSidebarVisible ? "md:ml-64" : "md:ml-0"}
-      `}
+        className={`
+    flex flex-col flex-1
+  `}
       >
         <header className="h-16 border-b border-zinc-200 bg-white flex items-center justify-between px-8 shrink-0">
           <div className="flex items-center gap-4">

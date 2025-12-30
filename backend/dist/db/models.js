@@ -75,6 +75,7 @@ exports.AnalyticsSnapshotModel = mongoose_1.default.model("AnalyticsSnapshot", A
 const FollowUpReminderSchema = new mongoose_1.default.Schema({
     jobId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "JobApplication", required: true },
     userId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "User", required: true },
+    notes: { type: String },
     scheduledFor: Date,
     sent: { type: Boolean, default: false },
     sentAt: Date,

@@ -21,6 +21,7 @@ interface FollowUpApiResponse {
     company: string;
     status: string;
     lastUpdate?: string;
+    notes: string;
   };
 }
 
@@ -93,7 +94,7 @@ const FollowUpsView: React.FC = () => {
             lastContacted: item.jobId.lastUpdate
               ? timeAgo(new Date(item.jobId.lastUpdate))
               : "—",
-            notes: "",
+            notes: item.jobId?.notes,
             status: getFollowUpStatus(item.scheduledFor, item.sent),
           })
         );
@@ -198,8 +199,8 @@ const FollowUpsView: React.FC = () => {
                 <th className="px-6 py-4 text-[11px] font-bold text-zinc-400 uppercase tracking-wider mono">
                   Follow-Up Date
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold text-zinc-400 uppercase tracking-wider mono text-right">
-                  Actions
+                <th className="px-6 py-4 text-[11px] font-bold text-zinc-400 uppercase tracking-wider mono">
+                  Notes
                 </th>
               </tr>
             </thead>
@@ -233,6 +234,11 @@ const FollowUpsView: React.FC = () => {
                         LAST: {item.lastContacted}
                       </span>
                     </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <p className="text-xs text-zinc-500 leading-relaxed line-clamp-2 italic">
+                      {item.notes}
+                    </p>
                   </td>
                   <td className="px-6 py-4 text-right">
                     <button className="p-1 text-zinc-400 hover:text-zinc-900 transition-colors">

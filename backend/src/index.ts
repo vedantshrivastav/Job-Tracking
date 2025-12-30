@@ -243,11 +243,13 @@ app.post('/jobs/:id/follow-up',AuthMiddleware,async(req,res) => {
     const JobId = req.params.id
     const UserId = req.UserId
     const scheduledFor = new Date()
+    const {notes} = req.body
     scheduledFor.setDate(scheduledFor.getDate() + 3)
     try{
         const followUp = await FollowUpReminderModel.create({
             jobId : JobId,
             userId : UserId,
+            notes : notes,
             scheduledFor
         })
         res.status(201).json(followUp)

@@ -21,7 +21,7 @@ interface FollowUpApiResponse {
     company: string;
     status: string;
     lastUpdate?: string;
-    notes: string;
+    notes: [string];
   };
 }
 
@@ -82,6 +82,8 @@ const FollowUpsView: React.FC = () => {
 
         const data = await res.json();
 
+        console.log("this is the data from the followup endpoint", data);
+
         const transformed: FollowUpItem[] = data.map(
           (item: FollowUpApiResponse) => ({
             role: item.jobId.JobTitle,
@@ -94,7 +96,7 @@ const FollowUpsView: React.FC = () => {
             lastContacted: item.jobId.lastUpdate
               ? timeAgo(new Date(item.jobId.lastUpdate))
               : "—",
-            notes: item.jobId?.notes,
+            notes: item.jobId.notes,
             status: getFollowUpStatus(item.scheduledFor, item.sent),
           })
         );

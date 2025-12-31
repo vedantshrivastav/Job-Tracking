@@ -223,13 +223,11 @@ app.post('/jobs/:id/follow-up', middleware_1.AuthMiddleware, (req, res) => __awa
     const JobId = req.params.id;
     const UserId = req.UserId;
     const scheduledFor = new Date();
-    const { notes } = req.body;
     scheduledFor.setDate(scheduledFor.getDate() + 3);
     try {
         const followUp = yield models_1.FollowUpReminderModel.create({
             jobId: JobId,
             userId: UserId,
-            notes: notes,
             scheduledFor
         });
         res.status(201).json(followUp);

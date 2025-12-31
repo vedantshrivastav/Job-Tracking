@@ -37,7 +37,7 @@ const JobApplicationSchema = new mongoose.Schema({
       lastUpdate : Date,
       followUpDate : Date,
       // we can also add AI analysis here later
-      notes : [{type : mongoose.Schema.Types.ObjectId,ref : 'Notes'}],
+      notes : [{type:String}],
       timeline : [{type : mongoose.Schema.Types.ObjectId,ref : 'Timeline'}]
 })
 export const JobApplicationModel = mongoose.model('JobApplication',JobApplicationSchema)
@@ -92,7 +92,6 @@ const FollowUpReminderSchema = new mongoose.Schema(
   {
     jobId: { type: mongoose.Schema.Types.ObjectId, ref: "JobApplication", required: true },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    notes: {type : String},
     scheduledFor: Date,
     sent: { type: Boolean, default: false },
     sentAt: Date,

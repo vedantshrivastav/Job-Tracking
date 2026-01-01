@@ -82,8 +82,6 @@ const FollowUpsView: React.FC = () => {
 
         const data = await res.json();
 
-        console.log("this is the data from the followup endpoint", data);
-
         const transformed: FollowUpItem[] = data.map(
           (item: FollowUpApiResponse) => ({
             role: item.jobId.JobTitle,
@@ -292,10 +290,11 @@ const FollowUpsView: React.FC = () => {
                   Target Application
                 </label>
                 <select className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-md text-sm text-zinc-900 focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400 transition-all">
-                  <option>Select an active application...</option>
-                  <option>Senior Frontend Engineer @ Linear</option>
-                  <option>Fullstack Developer @ Vercel</option>
-                  <option>Software Engineer @ Railway</option>
+                  {followUps.map((job) => (
+                    <option key={job.company}>
+                      {job.role} @ {job.company}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-4">
